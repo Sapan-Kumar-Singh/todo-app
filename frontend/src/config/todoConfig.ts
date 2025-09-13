@@ -70,3 +70,45 @@ export const todoList = [
     dueDate: "2025-09-07"
   }
 ];
+
+export const createTodoList = {
+  id: 'create_todo',
+  fields: [
+    {
+      type: 'text',
+      headerName: 'Todo name',
+      field: 'todo_name',
+      required: true,
+      placeholder: 'Enter todo name',
+    },
+    {
+      type: 'textarea',
+      headerName: 'Description',
+      field: 'description',
+      required: true,
+      placeholder: 'Enter description',
+    }
+  ],
+};
+
+
+export const editTodoList = {
+  id: 'edit_todo',
+  fields: [
+    {
+      type: 'text',
+      headerName: 'Todo name',
+      field: 'todo_name',
+      required: true,
+      placeholder: 'Enter Todo Name',
+    },
+    {
+      type: 'textarea',
+      headerName: 'Description',
+      field: 'description',
+      required: true,
+      placeholder: 'Enter Description',
+    }
+  ],
+};
+

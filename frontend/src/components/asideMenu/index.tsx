@@ -35,7 +35,7 @@ const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave, widt
       >
         <AsideMenuHeader title={title} onclick={onClose} />
         {/* Body */}
-        {children}
+         <div className="p-2"> {children}</div>
 
         <AsideMenuFooter hideSave={hideSave} hideClose={hideClose} onSave={onSave} onClose={onClose} />
       </div>

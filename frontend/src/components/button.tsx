@@ -3,7 +3,7 @@ import type { VARIANT } from "../helper/enum";
 interface ButtonProps {
   title?: string;
   variant?: keyof typeof VARIANT;
-  onClick: () => void;
+  onClick: (evt?:any) => void;
   disabled?: boolean;
   children?: React.ReactNode;
 }
@@ -25,12 +25,14 @@ const buttonVariant:Record<keyof typeof VARIANT, string> = {
     "disabled:text-gray-400 ",
 } as const;
 
-const Button = ({ title, variant='FILLED', onClick, disabled=false, children }: ButtonProps) => {
+const Button = ({ title, variant='FILLED', onClick, disabled=false, children,...props  }: ButtonProps) => {
+  console.log("variant--",variant);
   return (
     <button
       className={`px-4 py-1  cursor-pointer font-medium transition-all duration-200 ${buttonVariant[variant]} ${!disabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
       onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {title} {children}
     </button>

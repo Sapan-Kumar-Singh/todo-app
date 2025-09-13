@@ -1,7 +1,7 @@
 export const VARIANT = {
-  FILLED: 'Filled',
-  OUTLINED: 'Outlined',
-  TEXT: 'Text',
+  FILLED: 'FILLED',
+  OUTLINED: 'OUTLINED',
+  TEXT: 'TEXT',
 } as const; 
 
 export const headerTitle={

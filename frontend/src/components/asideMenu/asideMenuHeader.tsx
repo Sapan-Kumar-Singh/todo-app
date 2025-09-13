@@ -15,8 +15,8 @@ const AsideMenuHeader = ({ title = "Aside menu",onclick }: AsideMenuHeaderType) 
                 {title}
             </div>
 
-            <div className="cursor-pointer" onClick={onclick}>
-                <BackIcon fill={"#2563EB"} />
+            <div className="cursor-pointer" data-tooltip-id="global-tooltip" data-tooltip-content="Back" onClick={onclick}>
+                <BackIcon/>
             </div>
 
         </div>

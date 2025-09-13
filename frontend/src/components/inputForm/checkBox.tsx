@@ -1,11 +1,14 @@
-import React, { useEffect, useState, type ChangeEvent } from 'react'
+import { useEffect, useState, type ChangeEvent } from 'react'
 
 interface CheckBoxType {
+    headerName?: string;
+    field?: string;
+    required?: boolean;
     checked: boolean;
     onChange?: (checked: boolean) => void;
 }
 
-const CheckBox = ({ checked, onChange }: CheckBoxType) => {
+const CheckBox = ({ headerName, field, required, checked, onChange }: CheckBoxType) => {
     const [isChecked, setIsChecked] = useState(checked);
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newChecked = e.target.checked;
@@ -16,9 +19,10 @@ const CheckBox = ({ checked, onChange }: CheckBoxType) => {
     useEffect(() => {
         setIsChecked(checked)
     }, [checked])
+
     return (
         <>
-
+            {headerName && <label htmlFor={field} className='font-medium text-black'>{headerName} {required && <div className='text-red-500'>*</div>}</label>}
             <input id="default-checkbox" type="checkbox" onChange={handleChange} checked={isChecked} value="" className="w-4 h-4 text-blue-600 outline-none bg-gray-100 border-gray-300 rounded-sm cursor-pointer " />
         </>
     )
