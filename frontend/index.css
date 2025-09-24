@@ -34,7 +34,26 @@ body {
     justify-content: center;
     justify-self: center;
   }
+  .text-formDefault{
+    color: #4B5563;
+  }
+ .text-formPrimary {
+  color: #2563EB !important;
+}
+.text-formError {
+  color: #DC2626 !important;
+}
+.formDisabled{
+color: #4B5563;
+}
 
+.border-b-formDefault{
+   border-bottom: 1px solid #4B5563 !important;
+}
+
+.border-b-formPrimary {
+  border-bottom: 1px solid #2563EB !important;
+}
   .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }

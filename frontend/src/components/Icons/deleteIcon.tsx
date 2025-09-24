@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DeleteIcon = ({ className = "w-6 h-6 text-red-400", ...props }: React.SVGProps<SVGSVGElement>) => {
+const DeleteIcon = ({ className = "w-4 h-4 text-red-500", ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       viewBox="0 0 24 24"

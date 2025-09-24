@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EditIcon = ({ className = "w-6 h-6 text-blue-500 ", ...props }: React.SVGProps<SVGSVGElement>) => {
+const EditIcon = ({ className = "w-4 h-4 text-blue-600 ", ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       viewBox="0 0 24 24"

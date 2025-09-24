@@ -1,0 +1,25 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.min-width{
+  min-width : 18px;
+}
+
+.hover-icon {
+  & * {
+    display: none;
+    height: 24px; 
+  }
+}
+
+.ag-row-hover {
+  & .hover-icon {
+    & * {
+      display: inline-block;
+    }
+  }
+}
+.pointer-auto{
+  pointer-events: auto;
+}

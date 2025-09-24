@@ -1,12 +1,15 @@
+
 import { todosModel } from "../models/schema.js";
 
-export const getTodos = async (req, res) => {
+export const fetchData = async(req, res) => {
+    
   try {
-    const todos = await todosModel.find();
+    const todos = await todosModel.find().sort({createdAt: -1});
+    res.set('Cache-Control', 'no-store');
     res.status(200).json({
       status: "Success",
       message: "Todos fetched successfully",
-      data: todos,
+      Data: todos,
     });
   } catch (error) {
     res.status(500).json({

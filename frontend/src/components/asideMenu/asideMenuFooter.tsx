@@ -4,8 +4,8 @@ import Button from "../button";
 interface AsideMenuFooterType{
     hideSave?:boolean;
     hideClose?:boolean;
-    onSave?:()=>void;
-    onClose?:()=>void;
+    onSave?:(evt?:any)=>void;
+    onClose?:(evt?:any)=>void;
 }
 const AsideMenuFooter = ({hideSave=false,hideClose=false,onSave,onClose}:AsideMenuFooterType) => {
   return (

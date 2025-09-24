@@ -8,27 +8,28 @@ interface AsideMenuProps {
   setIsOpen: (open: boolean) => void;
   hideSave?: boolean;
   hideClose?: boolean;
-  onSave?: () => void;
+  onSave?: (evt?:any) => void;
   width?: string;
   children: React.ReactNode;
 }
 
 const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave, width = '400', children }: AsideMenuProps) => {
 
-  const onClose = () => {
+  const onClose = (evt?:any) => {
+    evt?.preventDefault();
     setIsOpen(false);
   }
 
   return (
     <>
       <div
-        className={`fixed inset-0 bg-gray-400/50 transition-opacity duration-300 
+        className={`fixed inset-0 bg-gray-400/50 transition-opacity duration-300 z-10
         ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
         onClick={onClose}
       />
 
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-xl flex flex-col
+        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-xl flex flex-col z-10
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
         style={{ width: `${width}px` }}

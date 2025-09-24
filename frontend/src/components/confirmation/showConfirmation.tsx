@@ -1,8 +1,8 @@
-import { VARIANT } from '../../helper/enum';
+import { MESSAGE_TYPE, VARIANT } from '../../helper/enum';
 import Button from '../button';
 import React from 'react';
 
-interface ConfirmationDialogProps {
+interface ShowConfirmationProps {
     isOpen: boolean;
     message?: string;
     subMessage?: string;
@@ -11,10 +11,10 @@ interface ConfirmationDialogProps {
     onCancel: () => void;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+const ShowConfirmation: React.FC<ShowConfirmationProps> = ({
     isOpen,
-    message = 'Are you sure you want to delete?',
-    warningMessage = 'This action will permanently delete the item and cannot be recovered.',
+    message = MESSAGE_TYPE.DELETE_CONFIRMATION,
+    warningMessage =MESSAGE_TYPE.DELETE_WARNING,
     onConfirm,
     onCancel,
 }) => {
@@ -25,7 +25,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <div
                 className={`fixed inset-0 bg-gray-400/50 transition-opacity duration-300`}
             />
-            <div className="fixed inset-0 flex items-center justify-center">
+            <div className="fixed inset-0 flex items-center justify-center z-10">
                 <div className="bg-white shadow-xl rounded-md p-6 w-96">
                     <div className="text-lg font-medium mb-2 text-center">{message}</div>
                     <div className="text-sm text-red-600 italic mb-4 text-center">
@@ -44,4 +44,4 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     );
 };
 
-export default ConfirmationDialog;
+export default ShowConfirmation;

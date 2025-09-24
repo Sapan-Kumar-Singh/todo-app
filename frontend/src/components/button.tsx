@@ -26,7 +26,6 @@ const buttonVariant:Record<keyof typeof VARIANT, string> = {
 } as const;
 
 const Button = ({ title, variant='FILLED', onClick, disabled=false, children,...props  }: ButtonProps) => {
-  console.log("variant--",variant);
   return (
     <button
       className={`px-4 py-1  cursor-pointer font-medium transition-all duration-200 ${buttonVariant[variant]} ${!disabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
