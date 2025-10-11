@@ -86,6 +86,7 @@ type GridProps = {
   isTabDisable?: boolean;
   showDownloadIcon?: boolean;
   modifiedRef: any;
+  formik:any
 };
 
 interface IRow {
@@ -122,6 +123,7 @@ const Grid = React.memo(
       isTabDisable,
       modifiedRef,
       showDownloadIcon = false,
+      formik
      // refetch
     } = props;
 
@@ -319,6 +321,7 @@ const Grid = React.memo(
         maintainColumnOrder:true,
        // getContextMenuItems: getContextMenuItems,
         columnDefs: columnDefination,
+        context:{formik},
        // onGridReady: handleGridReady,
        // onColumnPinned: handleDisplayedColumnsChanged,
      //   onColumnMoved: handleDisplayedColumnsChanged,

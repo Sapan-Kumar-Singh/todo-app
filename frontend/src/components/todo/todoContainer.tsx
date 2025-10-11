@@ -83,11 +83,37 @@ const TodoContainer = () => {
         })
 
   }
+  
+  const handleComplete=async (evt:any,params:any)=>{
+      const completed=evt?.target.value;
+         const param= {
+      name: { url: 'update' },
+      body: {
+        CRUD:'U',
+        _id: params.data?.["_id"],
+        completed:completed
+      },
+      __config__: {
+        invalidatesTags: () => []
+      }
+    }
+   const res= await update(param);
+    if(res?.data?.status==="Success"){
+      showToast("Todo updated successfully","success")
+    } else {
+      const message=editDetails ? "Failed to edit todo!" : "Failed to create todo!";
+      showToast(message,"error");
+    }
+  }
 
+  const onClose=(evt?:any)=>{
+    evt?.preventDefault();
+    setEditDetails(null);
+  }
 
      const todoGridConfig=useMemo(()=>{
-          return todoListConfig(handleEdit,handleDelete)
-     },[handleEdit,handleDelete])
+          return todoListConfig(handleEdit,handleDelete,handleComplete)
+     },[handleEdit,handleDelete,handleComplete])
     
      const createTodoFormConfig=useMemo(()=>{
       return createTodoConfig(editDetails)
@@ -128,6 +154,7 @@ const TodoContainer = () => {
           title={editDetails ? 'Edit todo' : 'Create todo'}
           setIsOpen={setShowMenu}
           onSave={handleSave}
+          onClose={onClose}
           width='500'
         >
           <FormGrp group={createTodoFormConfig} ref={createTodoRef}/>

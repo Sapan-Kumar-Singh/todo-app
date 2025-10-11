@@ -50,7 +50,6 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
       );
     }
     
-    const hasActionColums=useRef(false);
     let [data, setData, dataRef] = useStateRef([]);
     let [isLoading, setIsLoading] = useStateRef(false);
     let [isFetching, setIsFetching] = useStateRef(false);
@@ -231,9 +230,9 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
     }
      
     useEffect(()=>{
-      
-          if(isFormGrid && !hasActionColums.current){
             let gridColumnConfig=group.groupChildProps?.uiConfig;
+            const hasActionColums=gridColumnConfig?.columnDefs.some((col:any)=>col.field.includes('CRUD'));
+          if(isFormGrid && !hasActionColums){
             const defaultColDef={
                 resizable: true,
                 width: 150,
@@ -255,9 +254,8 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
                 group
               )
             }
-             hasActionColums.current=true;
           }
-    },[])
+    },[data])
     const formValue = () => {
       return (
         <>
@@ -309,7 +307,7 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
                       title={section?.name || ''}
                       sectionId={section?.id}
                       isTabDisable={isSectionDisable || isTabDisable}
-                     // formik={formik}
+                      formik={formik}
                     //  refetch={ref?.current?.refetch}
             />
           </div>

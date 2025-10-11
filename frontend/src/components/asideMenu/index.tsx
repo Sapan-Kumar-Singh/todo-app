@@ -9,15 +9,17 @@ interface AsideMenuProps {
   hideSave?: boolean;
   hideClose?: boolean;
   onSave?: (evt?:any) => void;
+  onClose?:(evt?:any)=>void;
   width?: string;
   children: React.ReactNode;
 }
 
-const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave, width = '400', children }: AsideMenuProps) => {
+const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave,onClose, width = '400', children }: AsideMenuProps) => {
 
-  const onClose = (evt?:any) => {
-    evt?.preventDefault();
+  const handleClose = (evt?:any) => {
     setIsOpen(false);
+    onClose && onClose(evt)
+
   }
 
   return (
@@ -34,11 +36,11 @@ const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave, widt
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
         style={{ width: `${width}px` }}
       >
-        <AsideMenuHeader title={title} onclick={onClose} />
+        <AsideMenuHeader title={title} onclick={handleClose} />
         {/* Body */}
          <div className="p-2"> {children}</div>
 
-        <AsideMenuFooter hideSave={hideSave} hideClose={hideClose} onSave={onSave} onClose={onClose} />
+        <AsideMenuFooter hideSave={hideSave} hideClose={hideClose} onSave={onSave} onClose={handleClose} />
       </div>
     </>
   );

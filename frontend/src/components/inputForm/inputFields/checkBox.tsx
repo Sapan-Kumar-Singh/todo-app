@@ -1,41 +1,45 @@
 
+import type { ChangeEvent } from 'react';
 import type { FormField } from '../../types';
 
 interface CheckBoxType {
-    fieldFlexWidth?: string;
     label?: FormField["label"];
     field: FormField['field'];
     readonly?: boolean;
     formik?: any;
     value?:any
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
+     onBlur?: (e: any) => void;
 }
 
 
 
-const CheckBox = ({ label, field, readonly, formik ,value}: CheckBoxType) => {
-
-
+const CheckBox = ({ label, field, readonly=false, formik ,value,onChange,onBlur}: CheckBoxType) => {
+    
     return (
         <div
 
         >
             <label
                 className="form-checkmarkvalue flex items-center justify-center"
-                htmlFor={`${field}-checkbox`}
-                id={`${field}-label`}
+                htmlFor={field}
+                id={field}
             >
                 <input
-                    id={`${field}-checkbox`}
+                    id={field}
                     aria-labelledby={`${field}-label`}
                     type="checkbox"
                     className="checkBox"
                     name={field}
-                    // onChange={checkBoxChange}
-                    value={formik?.values?.[field] || value}
                     checked={['Y', true].includes(formik?.values?.[field] || value)}
-                    onClick={(e) => {
+                    onChange={(e) => {
                        if(readonly) return;
-                        return true;
+                       const newValue = e.target.checked ? 'Y' : 'N';
+                       formik.setFieldValue(field, newValue);
+                      onChange && onChange({ ...e, target: { ...e.target, value: newValue } });
+                    }}
+                     onBlur={(e) => {
+                      onBlur && onBlur?.(e);
                     }}
                     aria-checked={['Y', true].includes(formik?.values?.[field] || value)}
                 />

@@ -1,4 +1,4 @@
-import  { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent } from 'react'
 import type { FormField } from '../../types';
 import classNames from 'classnames';
 
@@ -20,23 +20,23 @@ interface DateInput {
   placeholder?: string;
 }
 const DateField = ({
-    className,
-    fieldFlexWidth,
-    label,
-    required,
-    uid,
-    name,
-    value,
-    readonly,
-    onChange,
-    placeholder='',
-    errorMessage,
-    disabled
-}:DateInput) => {
+  className,
+  fieldFlexWidth,
+  label,
+  required,
+  uid,
+  name,
+  value,
+  readonly,
+  onChange,
+  placeholder = '',
+  errorMessage,
+  disabled
+}: DateInput) => {
 
-    const [isFocused, setIsFocused] = useState(false);
-    const inputRef=useRef(null)
-     const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef(null)
+  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setIsFocused(false);
     if (!readonly && value !== "") {
@@ -52,9 +52,9 @@ const DateField = ({
         });
     }
   };
-  
-    
- return (
+console.log("date ---",value);
+
+  return (
     <div
       className={`my-[5px] input-field-container ${className ? className : ""}`}
       style={{ width: fieldFlexWidth }}
@@ -100,7 +100,7 @@ const DateField = ({
           onFocus={() => setIsFocused(true)}
           onBlur={(e) => {
             setIsFocused(false);
-           handleBlur(e);
+            handleBlur(e);
           }}
           value={value}
           type={'date'}
@@ -122,6 +122,7 @@ const DateField = ({
         )}
       </div>
     </div>
-  );}
+  );
+}
 
 export default DateField

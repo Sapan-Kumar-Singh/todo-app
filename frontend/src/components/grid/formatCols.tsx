@@ -1,9 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
 import { Input } from "../inputForm/inputFields/inputText";
 import { TextArea } from "../inputForm/inputFields/TextArea";
 import DateField from "../inputForm/inputFields/dateField";
 import CheckBox from "../inputForm/inputFields/checkBox";
+
+export const formattedDate = (isoString: string) => {
+  const date = new Date(isoString);
+
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+
+  const formatted = `${year}-${month}-${day}`;
+  return formatted;
+}
 
 const columnTypesConfig:any={
     customeTextCell: {
@@ -103,9 +114,12 @@ CellDatePicker:{
         }
     },
     cellRenderer:(params:any)=>{
+      
+      const value=formattedDate(params?.data?.createdAt);
+      
            return(
             <div>
-                <DateField name={"grid-date"} type={"date"}/>
+                <DateField name={"grid-date"} type={"date"} value={value} readonly={params?.colDef?.readonly}/>
             </div>
            )
     }
@@ -113,6 +127,7 @@ CellDatePicker:{
  CellCheckboxPicker: {
     cellRenderer: (params: any) => {
       let additionalEditable = true;
+      const field=`${params?.colDef?.field}_${params.data?._id}`
       if (params?.colDef?.hasOwnProperty("additionalEditable")) {
         if (typeof params.colDef?.additionalEditable === 'function') {
           additionalEditable = params.colDef.additionalEditable(params);
@@ -126,9 +141,14 @@ CellDatePicker:{
           additionalEditable = params.colDef.editable;
         }
       }
+      const onChange=(evt: ChangeEvent<HTMLInputElement>)=>{
+        if(params?.colDef?.onChange){
+          params?.colDef?.onChange(evt,params);
+        }
+      }
       return (
         <div className="checkmarkvalue cell-checkbox">
-          <CheckBox field={params?.colDef?.field} value={params?.data?.completed} />
+          <CheckBox field={field} formik={params?.context.formik} value={params.data.completed} onChange={onChange} />
         </div>
       );
     },

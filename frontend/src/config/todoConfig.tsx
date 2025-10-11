@@ -4,17 +4,16 @@ import { columnTypesConfig } from "../components/grid/formatCols";
 import DeleteIcon from "../components/Icons/deleteIcon";
 import EditIcon from "../components/Icons/editIcon";
 
-
-
-
-const todoListColDefs={
-  columnTypes:columnTypesConfig,
-  columnDefs:[
+const colDefs=(handleComplete:(evt:any,params:any)=>void)=>{
+  return  {
+   columnTypes:columnTypesConfig,
+    columnDefs:[
      {
       field:'completed',
       headerName:'Completed',
-      width:120,
-      type:['CellCheckboxPicker']
+      width:100,
+      type:['CellCheckboxPicker'],
+      onChange:handleComplete,
     },
     {
       field:'title',
@@ -26,13 +25,23 @@ const todoListColDefs={
      {
       field:'description',
       headerName:'Description',
-      width:250,
+      width:200,
       readonly:true,
       type:['customeTextAreaCell']
+    },{
+      field:'createdAt',
+      headerName:'Created at',
+      width:150,
+      readonly:true,
+      type:['CellDatePicker']
     }
   ]
+  }
 }
-export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:any)=>void)=>{
+
+
+
+export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:any)=>void,handleComplete:(evt:any)=>void)=>{
     return {
       type: "grid",
       //  rows:[{'test_grid':'test row1'},{'test_grid':'test row2'}],
@@ -58,7 +67,7 @@ export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:
       },
       groupChildProps: {
         uiConfig: {
-          ...todoListColDefs,
+          ...colDefs(handleComplete),
           sideBar: { toolPanels: [] },
         },
       },
