@@ -1,9 +1,14 @@
-export enum VARIANT {
-  FILLED= 'FILLED',
-  OUTLINED= 'OUTLINED',
-  TEXT='TEXT',
-}; 
+export enum Variant {
+    Bordered='bordered',
+    Filled='filled',
+    Empty='empty'
+}
 
+export enum SizeEnum {
+  Small='small',
+  Medium='medium',
+  Large='large'
+}
 export const headerTitle={
     "title":"Todo List"
 }

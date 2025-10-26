@@ -1,6 +1,7 @@
-import { MESSAGE_TYPE, VARIANT } from '../../helper/enum';
-import Button from '../button';
+import { MESSAGE_TYPE, Variant } from '../../helper/enum';
+
 import React from 'react';
+import { Button } from '../button';
 
 interface ShowConfirmationProps {
     isOpen: boolean;
@@ -33,10 +34,10 @@ const ShowConfirmation: React.FC<ShowConfirmationProps> = ({
                     </div>
 
                     <div className="flex justify-around">
-                        <Button variant={VARIANT.OUTLINED} onClick={onCancel}>
-                            Cancel
+                        <Button type={'button'} variant={Variant.Bordered} onClick={onCancel}>
+                            <p>Cancel</p>
                         </Button>
-                        <Button onClick={onConfirm}>Delete</Button>
+                        <Button type={'button'} onClick={onConfirm}  > <p>Delete </p> </Button>
                     </div>
                 </div>
             </div>

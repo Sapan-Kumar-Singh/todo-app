@@ -1,7 +1,7 @@
 import type { JSX } from "react"
 
 export type FieldType=
-| 'text' | 'number' | 'date' | 'dateTime' | 'select' | 'percentile' | 'textarea' | 'checkbox' | 'jsx' | 'button' | 'codeEditor'
+| 'text' | 'number' | 'date' | 'dateTime' | 'select' | 'percentile' | 'textarea' | 'checkbox' | 'jsx' | 'button' | 'codeEditor' | 'password'
 
 export interface FormField {
   type: FieldType

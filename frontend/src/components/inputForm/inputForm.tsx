@@ -6,6 +6,7 @@ import { Input } from './inputFields/inputText';
 import { TextArea } from './inputFields/TextArea';
 import { v4 as uuidv4 } from 'uuid';
 import DateField from './inputFields/dateField';
+import { Password } from './inputFields/password';
 interface InputFormProps {
   field:FormField
   formik:any
@@ -46,7 +47,7 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
         'text':'11',
         'number':'22',
       }
-      const hasFieldError = formik.isSubmitting ||  formik.touched[field] ||  formik.errors[field]
+      const hasFieldError = (formik.isSubmitting ||  formik.touched[field] || (otherConfig.isRemoteValidation && remoteValidationErrors?.[field])) && formik.errors[field];
       const onChange=(evt:any)=>{
         
         if(formik){
@@ -65,15 +66,13 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
               required={required}
               name={field}
               readonly={readonly}
-              value={formik.values[field]}
+              value={formik.values[field] ?? ''}
               onBlur={(e) => formik?.handleBlur(e)}
               onChange={onChange}
               maxlength={maxlength}
               type={type}
               errorMessage={
-                hasFieldError
-                  ? formik.errors[field]
-                  : ""
+                hasFieldError ? remoteValidationErrors?.[field] || formik.errors[field] : ""
               }
             />
           );
@@ -89,16 +88,14 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
               uid={uid}
              // ref={textAreaRef}
               field={field}
-              value={formik.values[field]}
+              value={formik.values[field] ?? ''}
               readonly={readonly}
                onChange={onChange}
               onBlur={(e) => formik?.handleBlur(e)}
               maxlength={maxlength}
              // type={type}
-              errorMessage={
-                hasFieldError
-                  ?  formik.errors[field]
-                  : ""
+               errorMessage={
+                hasFieldError ? remoteValidationErrors?.[field] || formik.errors[field] : ""
               }
             />
           );
@@ -111,13 +108,11 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
               required={required}
               uid={uid}
               name={field}
-              value={formik.values[field]}
+              value={formik.values[field] ?? ''}
               readonly={readonly}
             //  onChange={onChange}
               errorMessage={
-                hasFieldError
-                  ?  formik.errors[field]
-                  : ""
+                hasFieldError ? remoteValidationErrors?.[field] || formik.errors[field] : ""
               }
               {...otherConfig}
             />
@@ -129,6 +124,28 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
             </>
 
           );
+
+        case "password" :
+           return (
+             <>
+             <Password
+             className={otherConfig?.className}
+              fieldFlexWidth={fieldFlexWidth}
+              label={label}
+              required={required}
+              name={field}
+              readonly={readonly}
+              value={formik.values[field] ?? ''}
+              onBlur={(e) => formik?.handleBlur(e)}
+              onChange={onChange}
+              maxlength={maxlength}
+              type={type}
+              errorMessage={
+                hasFieldError ? remoteValidationErrors?.[field] || formik.errors[field] : ""
+              }
+             />
+             </>
+           )  
         case "jsx":
           return <>{otherConfig.element &&  otherConfig.isJSX ?  <otherConfig.element/> : otherConfig.element}</>;
         default:

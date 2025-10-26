@@ -59,7 +59,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
 
   return (
     <div
-      className={classNames(className, "my-[5px] h-auto input-field-container")}
+      className={classNames(className, "my-[5px] h-auto ")}
       style={{ width: fieldFlexWidth }}
     >
       <div
@@ -74,16 +74,16 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
               id={uid}
               htmlFor={uid}
               className={classNames(
-                "inline-flex items-center text-formDefault text-[12px] font-semibold",
+                "inline-flex items-center text-form-default text-[12px] font-medium",
                 {
-                  "text-formPrimary": isFocused,
-                  "text-formError": !!errorMessage,
+                  "text-form-primary": isFocused,
+                  "text-form-error": !!errorMessage,
                 }
               )}
             >
               {label}
               {required && (
-                <span className={readonly ? "text-formDisabledText" : "text-red-600"}>
+                <span className={readonly ? "text-form-disabled-text" : "text-red-600"}>
                   *
                 </span>
               )}
@@ -112,17 +112,17 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
           value={value}
           maxLength={maxlength ? maxlength : undefined}
           className={classNames(
-            "leading-[1rem] resize-y border-t-0 border-l-0 border-r-0 border-b border-b-formDefault pb-[5px] text-[14px] font-semibold outline-none !bg-transparent",
+            "leading-[1rem] resize-y border-t-0 border-l-0 border-r-0 border-b border-b-form-default pb-[5px] text-[14px] font-medium outline-none !bg-transparent",
             {
               "border-b-formError": !!errorMessage,
-              "border-b-formPrimary": isFocused,
-              "border-b-formDisabled !text-formDisabledText !cursor-not-allowed":
+              "border-b-form-primary": isFocused,
+              "border-b-form-disabled !text-form-disabled-text !cursor-not-allowed":
                 readonly,
             }
           )}
         />
         {!!errorMessage && (
-          <div id={errorId} className="text-formError font-bold text-[10px]">
+          <div id={errorId} className="text-form-error font-medium text-[10px]">
             {errorMessage}
           </div>
         )}

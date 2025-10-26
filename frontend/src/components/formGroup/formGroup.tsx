@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState, type ForwardedRef } from 'react'
 import type { FormField } from '../types';
-import { useFormik } from 'formik';
+import { Form, useFormik } from 'formik';
 import type { SectionsType, GroupType } from '../types';
 import { useStateRef } from '../context/UseStateRef';
 import { Skeleton } from '../skeleton';
 import { InputForm } from '../inputForm/inputForm';
 import Grid from '../grid';
 import { appendActionColumns } from '../grid/actionColumnManager';
+import { FormValidator } from './formVakidator';
 
 
 interface FormGrpProps {
@@ -34,13 +35,14 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
   ) => {
     const formRef = useRef<HTMLDivElement | null>(null);
     const isFormFields = group.type === 'inputFields';
-    const isFormGrid=group.type==='grid';
+    const isFormGrid = group.type === 'grid';
     const isFormJsx = group.type === 'jsx';
-    const JsxChildren=isFormJsx && group.children;
+    const JsxChildren = isFormJsx && group.children;
 
     const CRUDRef = useRef<boolean>(false);
-    const gridRef=useRef(null);
-    const[queryConfig,setQueryConfig]=useState({...group?.queryConfig});
+    const gridRef = useRef(null);
+    const additionalError = useRef<Record<string, string | null>>({});
+    const [queryConfig, setQueryConfig] = useState({ ...group?.queryConfig });
 
     if (isFormFields && !group.fields) {
       console.error(
@@ -49,15 +51,15 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
         }`
       );
     }
-    
+
     let [data, setData, dataRef] = useStateRef([]);
     let [isLoading, setIsLoading] = useStateRef(false);
     let [isFetching, setIsFetching] = useStateRef(false);
     let [status, setStatus] = useStateRef(null);
-    let refetch=()=>{};
-     const gridId=useMemo(()=>{
-           return group?.customGridId || `tab_section_group_${groupIndex || "0"}`;
-     },[section])
+    let refetch = () => { };
+    const gridId = useMemo(() => {
+      return group?.customGridId || `tab_section_group_${groupIndex || "0"}`;
+    }, [section])
     const styles = useMemo(() => {
       return { minHeight: "200px" };
     }, [group]);
@@ -67,32 +69,100 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
       isFullWidth: false,
       styles: styles,
     };
-   
-    const{query=()=>{},queryOptions,queryParams,dependentParams}=queryConfig || {};
-    let extraQuery={};
-    let skipQuery=false;
- 
-    const [initialFieldValues, setInitialFieldValues] = useState<Record<string, any>>();
-     
-    const params=useMemo(()=>(
-      {...queryParams,...extraQuery}
-    ),[queryParams,extraQuery]);
 
-    const skip=useMemo(()=>Object.values(params).some((p)=>typeof p ==='undefined' || skipQuery),[skipQuery,params]);
-    const options=useMemo(()=>({...queryOptions,skip}),[queryOptions,skip]);
-     let groupFetchedData:any;
+    const { query = () => { }, queryOptions, queryParams, dependentParams } = queryConfig || {};
+    let extraQuery = {};
+    let skipQuery = false;
+
+    const [initialFieldValues, setInitialFieldValues] = useState<Record<string, any>>();
+
+    const params = useMemo(() => (
+      { ...queryParams, ...extraQuery }
+    ), [queryParams, extraQuery]);
+
+    const skip = useMemo(() => Object.values(params).some((p) => typeof p === 'undefined' || skipQuery), [skipQuery, params]);
+    const options = useMemo(() => ({ ...queryOptions, skip }), [queryOptions, skip]);
+    let groupFetchedData: any;
+
+    try {
+      groupFetchedData = query(queryParams, options);
+    } catch (err) {
+      console.log("when error=", query, queryOptions, queryParams);
+      console.log("hook error", err);
+    }
+
+   const generateValidationSchemas = () => {
+  const onChangeValidationObject: any =
+    isFormFields && group.fields
+      ? group.fields.reduce((rules: any, iField: FormField) => {
+          const isReadOnly =
+            typeof iField.readonly === 'function'
+              ? iField.readonly({ formik })
+              : iField.readonly;
+
+          let schema;
+
+          if (iField.onChangeValidation && iField.onChangeValidation() && !isReadOnly) {
+            schema = iField.onChangeValidation();
+          } else if (iField.type === 'number') {
+            schema = FormValidator.number().optional().allow(null, '').empty('');
+          } else {
+            schema = FormValidator.string().optional().allow(null, '').empty('');
+          }
+
+          if (iField.required && !isReadOnly) {
+            schema = schema
+              .required()
+              .messages({
+                'any.required': ' is required',
+                'string.empty': ' cannot be empty',
+              });
+          }
+
+          rules[iField.field] = schema;
+          return rules;
+        }, {})
+      : {};
+
+  const onChangeSchema = FormValidator.object(onChangeValidationObject);
+  return { onChangeSchema };
+};
+
     
-     try {
-       groupFetchedData=query(queryParams,options);
-     } catch(err){
-      console.log("when error=",query,queryOptions,queryParams);
-      console.log("hook error",err);      
-     }
     const formik = useFormik({
       initialValues: {},
       validate: (values: any) => {
+        const {onChangeSchema}=generateValidationSchemas()
+        const validationResult = onChangeSchema.validate(values || {}, {
+          abortEarly: false,
+          allowUnknown: true,
+        });
 
+        const errors: Record<string, string> = {};
+
+        // Add Joi validation messages (if any)
+        if (validationResult.error) {
+          validationResult.error.details.forEach((ele: any) => {
+            const fieldObj = group.fields?.find((f: FormField) => f.field === ele.path[0]);
+            if (fieldObj) {
+              errors[ele.path[0]] = `${fieldObj.label || ""} ${ele.message}`;
+            }
+          });
+        }
+
+
+        // Merge in any additional custom errors
+        if (isFormFields && additionalError.current) {
+          for (const [errorField, errorMsg] of Object.entries(additionalError.current)) {
+            if (errorMsg && !errors[errorField]) {
+              errors[errorField] = errorMsg as string;
+            }
+          }
+        }
+      
+        return errors;
       },
+
       onSubmit: (_values: any) => {
         // console.log('values', values)
       },
@@ -148,7 +218,6 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
                 //   break;
                 // }
                 default: {
-
                   obj[item.field] = fieldVal;
                   if (!obj[item.field] && item.fieldProps?.value) {
                     obj[item.field] = item.fieldProps?.value;
@@ -184,30 +253,31 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
         // triggerFormChangeEvent();
       }
     };
-    
-     const modifyQueryConfigParam=(params:any)=>{
-      setQueryConfig((prevState:any)=>({
+
+    const modifyQueryConfigParam = (params: any) => {
+      setQueryConfig((prevState: any) => ({
         ...prevState,
         params
       }))
-     }
-     if(groupFetchedData){
-        data=groupFetchedData?.data?.['Data'];
-        isFetching=groupFetchedData.isFetching;
-        isLoading=groupFetchedData.isLoading;
-        refetch=groupFetchedData.refetch;
-        status=groupFetchedData.status;
-     } else if(group.rows && !group.queryConfig){
-      data=group.rows;
-      isLoading=false;
-      isFetching=false;
-     }
+    }
+    if (groupFetchedData) {
+      data = groupFetchedData?.data?.['Data'];
+      isFetching = groupFetchedData.isFetching;
+      isLoading = groupFetchedData.isLoading;
+      refetch = groupFetchedData.refetch;
+      status = groupFetchedData.status;
+    } else if (group.rows && !group.queryConfig) {
+      data = group.rows;
+      isLoading = false;
+      isFetching = false;
+    }
 
-     if(data && Array.isArray(data)){
-        if(isFormGrid && data && group.editable){
-          data=data.map((element:any)=>({...element,CRUD:"R"}))
-        }
-     }
+    if (data && Array.isArray(data)) {
+      if (isFormGrid && data && group.editable) {
+        data = data.map((element: any) => ({ ...element, CRUD: "R" }))
+      }
+    }
+
     if (ref && formRef) {
       ref.current = {
         ...ref.current,
@@ -216,11 +286,11 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
         groupIndex,
         formik,
         formRef,
-         CRUDRef,
-         gridRef,
+        CRUDRef,
+        gridRef,
         queryData: groupFetchedData,
         // handleSubmit,
-         modifyQueryConfigParam,
+        modifyQueryConfigParam,
         // onRefetch() {
         //   calculateInitialFormValues();
         //   toolTipInitial();
@@ -228,92 +298,92 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
         // inputChangeStatus,
       };
     }
-     
-    useEffect(()=>{
-            let gridColumnConfig=group.groupChildProps?.uiConfig;
-            const hasActionColums=gridColumnConfig?.columnDefs.some((col:any)=>col.field.includes('CRUD'));
-          if(isFormGrid && !hasActionColums){
-            const defaultColDef={
-                resizable: true,
-                width: 150,
-               editable: false,
-            }
-            if(!gridColumnConfig.defaultColDef){
-               gridColumnConfig.defaultColDef={defaultColDef}
-            } else{
-              gridColumnConfig.defaultColDef={
-                ...defaultColDef,
-                ...gridColumnConfig?.defaultConDef
-              } 
-            }
 
-            if(isFormGrid && group.editable===true){
-              gridColumnConfig=appendActionColumns(
-                gridColumnConfig,
-                section,
-                group
-              )
-            }
+    useEffect(() => {
+      let gridColumnConfig = group.groupChildProps?.uiConfig;
+      const hasActionColums = gridColumnConfig?.columnDefs.some((col: any) => col.field.includes('CRUD'));
+      if (isFormGrid && !hasActionColums) {
+        const defaultColDef = {
+          resizable: true,
+          width: 150,
+          editable: false,
+        }
+        if (!gridColumnConfig.defaultColDef) {
+          gridColumnConfig.defaultColDef = { defaultColDef }
+        } else {
+          gridColumnConfig.defaultColDef = {
+            ...defaultColDef,
+            ...gridColumnConfig?.defaultConDef
           }
-    },[data])
+        }
+
+        if (isFormGrid && group.editable === true) {
+          gridColumnConfig = appendActionColumns(
+            gridColumnConfig,
+            section,
+            group
+          )
+        }
+      }
+    }, [data])
     const formValue = () => {
       return (
         <>
-       { isFormFields && group.fields && (
-          <div
-            className={`input-box-container form-container ${group.hiddenChangeIcon ? "!p-0" : "!pb-[19px] !px-6"
-              } pl-6 text-xs !leading-[18px] ${group.fields?.filter((e) =>
-                typeof e.hidden === "function"
-                  ? e.hidden(formik)
-                  : e.hidden
-              ).length === group.fields?.length
-                ? "pace-p-0"
-                : ""
-              } ${className}`}
-          >
-            {group.fields?.map((field: FormField, index: number) => (
-              <InputForm
-                key={index}
-                field={field}
-                formik={formik}
-                initialFieldValues={initialFieldValues}
-                groupFields={group.fields}
-                isTabDisable={isTabDisable || isSectionDisable}
-              />
-            ))}
-          </div>
-        )}
-        {isFormGrid && (
-          <div
-             style={group.groupChildProps?.uiConfig?.domLayout !=='autoHeight' ? styles : {}}
+          {isFormFields && group.fields && (
+            <div
+              className={`input-box-container form-container ${group.hiddenChangeIcon ? "!p-0" : "!pb-[19px] !px-6"
+                } pl-6 text-xs !leading-[18px] ${group.fields?.filter((e) =>
+                  typeof e.hidden === "function"
+                    ? e.hidden(formik)
+                    : e.hidden
+                ).length === group.fields?.length
+                  ? "pace-p-0"
+                  : ""
+                } ${className}`}
             >
-            <Grid
-             {...(group.groupChildProps)}
-                      id={gridId}
-                      key={data?.length ? `filled-grid-${gridId}` : `empty-grid-${gridId}`}
-                      ref={gridRef}
-                     // preserveSelectedTabData={true}
-                      style={{ height: '100%'}}
-                      rows={data}
-                      groupIndex={groupIndex}
-                    //  allowGridSizeChange={noGridResize ? false : allowGridSizeChange}
-                     // showTotal={group.showTotal ?? false}
-                     // formContext={formContext}
-                      // formContainerApi={
-                      //   formContainerApi ? formContainerApi : ({} as FormApi)
-                      // }
-                      isEditableGrid={group.editable}
-                      group={group}
-                      title={section?.name || ''}
-                      sectionId={section?.id}
-                      isTabDisable={isSectionDisable || isTabDisable}
-                      formik={formik}
-                    //  refetch={ref?.current?.refetch}
-            />
-          </div>
-        )}
+              {group.fields?.map((field: FormField, index: number) => (
+                <InputForm
+                  key={index}
+                  field={field}
+                  formik={formik}
+                  initialFieldValues={initialFieldValues}
+                  groupFields={group.fields}
+                  isTabDisable={isTabDisable || isSectionDisable}
+                />
+              ))}
+            </div>
+          )}
+          {isFormGrid && (
+            <div
+              style={group.groupChildProps?.uiConfig?.domLayout !== 'autoHeight' ? styles : {}}
+            >
+              <Grid
+                {...(group.groupChildProps)}
+                id={gridId}
+                key={data?.length ? `filled-grid-${gridId}` : `empty-grid-${gridId}`}
+                ref={gridRef}
+                // preserveSelectedTabData={true}
+                style={{ height: '100%' }}
+                rows={data}
+                groupIndex={groupIndex}
+                //  allowGridSizeChange={noGridResize ? false : allowGridSizeChange}
+                // showTotal={group.showTotal ?? false}
+                // formContext={formContext}
+                // formContainerApi={
+                //   formContainerApi ? formContainerApi : ({} as FormApi)
+                // }
+                isEditableGrid={group.editable}
+                group={group}
+                title={section?.name || ''}
+                sectionId={section?.id}
+                isTabDisable={isSectionDisable || isTabDisable}
+                formik={formik}
+              //  refetch={ref?.current?.refetch}
+              />
+            </div>
+          )}
 
-        {isFormJsx && JsxChildren && <JsxChildren/>}
+          {isFormJsx && JsxChildren && <JsxChildren />}
         </>
       );
     };

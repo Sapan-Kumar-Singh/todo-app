@@ -273,7 +273,8 @@ export const api = createApi({
           config?.url ||
           (name ? `update?${new URLSearchParams(name).toString()}` : "update");
         const method = config?.method || "POST";
-
+          console.log("url--",url);
+          console.log("body--",JSON.stringify(copiedPayload))
         return {
           url: url,
           method: method,

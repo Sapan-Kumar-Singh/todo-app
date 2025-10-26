@@ -1,20 +1,33 @@
-import { ToastContainer } from "react-toastify";
-import { FormProvider } from "./src/components/context/FromContext";
-import TodoContainer from "./src/components/todo/todoContainer"
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./src/components/login";
+import Singup from "./src/components/singup";
+import ProtectedRoute from "./src/components/routes";
+import TodoContainer from "./src/components/todo/todoContainer";
 
-function App() {
-  
+
+const App = () => {
   return (
-    <>
-  
-    <FormProvider>
-      <TodoContainer/>
-    </FormProvider>
-     <ToastContainer/>
-     <ReactTooltip id="global-tooltip" place="bottom" variant="dark"/>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Singup />} />
 
-export default App
+        {/* Protected route */}
+        <Route
+          path="/todos"
+          element={
+            <ProtectedRoute>
+              <TodoContainer />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Default redirect */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;

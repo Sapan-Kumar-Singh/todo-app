@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 
-import { headerTitle, VARIANT } from '../../helper/enum'
-import Button from '../button'
+import { headerTitle, Variant } from '../../helper/enum'
 import CreateIcon from '../Icons/createIcon'
 import SearchBox from '../searchBox'
 import AsideMenu from '../asideMenu'
@@ -10,6 +9,7 @@ import { useUpdateDataMutation } from '../../api-services'
 import { showToast } from '../showToast'
 import { createTodoConfig, todoListConfig } from '../../config/todoConfig'
 import ShowConfirmation from '../confirmation/showConfirmation'
+import { Button } from '../button'
 
 
 const TodoContainer = () => {
@@ -119,9 +119,10 @@ const TodoContainer = () => {
       return createTodoConfig(editDetails)
      },[editDetails])
     
+  
   return (
     <>
-      <div className="todo-container w-auto min-h-[450px] m-8  rounded shadow border border-gray-300 bg-white">
+      <div className="flex justify-center justify-self-center  w-auto min-h-[450px] m-8  rounded shadow border border-gray-300 bg-white">
         <div >
            <div className='w-full pb-4 shadow'>
             <div className="text-gray-600 font-bold text-sm m-4 flex justify-self-center">{headerTitle.title}</div>
@@ -132,7 +133,8 @@ const TodoContainer = () => {
                 data-tooltip-id="global-tooltip"
                 data-tooltip-content="Create todo"
                 onClick={()=>setShowMenu(true)}
-                variant={VARIANT.TEXT}
+                variant={Variant.Empty}
+                type='button'
               >
                 <CreateIcon className="w-6 h-6 text-blue-500 " />
               </Button>
