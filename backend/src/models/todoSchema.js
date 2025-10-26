@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose";
 
+
+
 const todosSchema = new Schema(
   {
     title: {
@@ -21,10 +23,15 @@ const todosSchema = new Schema(
         message: "Completed must be either 'Y' or 'N'"
       },
       default: "N"
+    },
+    user:{
+      type:Schema.Types.ObjectId,
+      ref:"User"
     }
   },
   { timestamps: true }
 );
 
-export const todosModel = model("Todos", todosSchema);
+export const Todos = model("Todos", todosSchema);
+
 

@@ -1,4 +1,4 @@
-import { todosModel } from "../models/schema.js";
+import { Todos } from "../models/todoSchema.js";
 
 const sendResponse = (res, statusCode, status, message, data = null) => {
   return res.status(statusCode).json({ status, message, data });
@@ -8,7 +8,7 @@ export const updateData = async (req, res) => {
   const { CRUD, title, description,completed,_id } = req.body;
   if (CRUD === "C") {
     try {
-      const newTodo = new todosModel({
+      const newTodo = new Todos({
         title,
         description,
       });
@@ -39,7 +39,7 @@ export const updateData = async (req, res) => {
       if(completed!==undefined){
           updatedFields.completed=completed;
       }
-      const updatedTodo = await todosModel.findByIdAndUpdate(
+      const updatedTodo = await Todos.findByIdAndUpdate(
         _id,
         updatedFields,
         { new: true, runValidators: true }
@@ -62,7 +62,7 @@ export const updateData = async (req, res) => {
     }
 
     try {
-      const deletedTodo = await todosModel.findByIdAndDelete(_id);
+      const deletedTodo = await Todos.findByIdAndDelete(_id);
       if (!deletedTodo) {
         return sendResponse(res, 404, "Failed", "Todo not found");
       }
