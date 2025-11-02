@@ -25,8 +25,8 @@ const AsideMenu = ({ isOpen, setIsOpen, title, hideSave, hideClose, onSave,onClo
   return (
     <>
       <div
-        className={`fixed inset-0 bg-gray-400/50 transition-opacity duration-300 z-10
-        ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
+        className={`fixed inset-0 bg-drawer-background transition-opacity duration-300 z-10
+        ${isOpen ? "opacity-50 visible" : "opacity-0 invisible"}`}
         onClick={onClose}
       />
 

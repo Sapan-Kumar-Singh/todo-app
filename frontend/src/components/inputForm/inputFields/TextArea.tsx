@@ -27,6 +27,7 @@ export interface TextAreaProps {
   fieldFlexWidth?: string;
   spellCheck?: "true" | "false";
   placeholder?: string;
+  insideGrid?:boolean
 }
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
@@ -45,6 +46,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
   placeholder,
   spellCheck = "true",
   rows =1,
+  insideGrid=false
 }: TextAreaProps, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -114,9 +116,11 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
           className={classNames(
             "leading-[1rem] resize-y border-t-0 border-l-0 border-r-0 border-b border-b-form-default pb-[5px] text-[14px] font-medium outline-none !bg-transparent",
             {
-              "border-b-formError": !!errorMessage,
-              "border-b-form-primary": isFocused,
-              "border-b-form-disabled !text-form-disabled-text !cursor-not-allowed":
+              "border-b border-form-default":!insideGrid,
+              "border-b border-form-error": !!errorMessage,
+              "border-b border-form-primary": isFocused,
+              "border-b border-form-disabled":!insideGrid,
+              "!text-form-disabled-text !cursor-not-allowed":
                 readonly,
             }
           )}

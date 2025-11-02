@@ -10,161 +10,114 @@ import { showToast } from '../showToast'
 import { createTodoConfig, todoListConfig } from '../../config/todoConfig'
 import ShowConfirmation from '../confirmation/showConfirmation'
 import { Button } from '../button'
-
+import { addRow, removeRow, updateRow } from '../../helper/utils'
 
 const TodoContainer = () => {
-    const[showMenu,setShowMenu]=useState(false);
-    const[editDetails,setEditDetails]=useState(null);
-    const todoRef=useRef(null);
-    const createTodoRef=useRef(null);
-    const[showConfirmation,setShowConfirmation]=useState(null)
-    const[update]=useUpdateDataMutation();
+  const [showMenu, setShowMenu] = useState(false);
+  const [editParams, setEditParams] = useState(null);
+  const todoRef = useRef(null);
+  const createTodoRef = useRef(null);
+  const [showConfirmation, setShowConfirmation] = useState<Record<string,any> | null>(null)
+  const [update] = useUpdateDataMutation();
 
-  const handleSave =async (evt: any) => {
+  const handleSave = (evt: any) => {
     evt?.preventDefault();
-    const {title,description}=createTodoRef?.current?.formik?.values;
-    const params = {
-      name: { url: 'update' },
-      body: {
-        CRUD: editDetails ? 'U' : 'C',
-        _id: editDetails ? editDetails?.["_id"] : null,
-        title: title,
-        description: description,
-      },
-      __config__: {
-        invalidatesTags: () => ['fetch']
-      }
-    }
-    const res= await update(params);
-    if(res?.data?.status==="Success"){
-      const message=editDetails ? "Todo edited successfully!" : "Todo created successfully!";
-      showToast(message,"success")
+   const data = createTodoRef?.current?.formik?.values;
+    if(editParams){
+      
+      updateRow(editParams,data);
+      setEditParams(null);
     } else {
-      const message=editDetails ? "Failed to edit todo!" : "Failed to create todo!";
-      showToast(message,"error");
+        const gridApi=todoRef?.current?.gridRef?.current?.gridOptions;
+       if(gridApi){
+          addRow(gridApi,data);
+       }
     }
-     if(editDetails){
-      setEditDetails(null);
-     }
      setShowMenu(false);
   }
 
   const handleEdit = (params: any) => {
-    if (params.param.data)
-      setEditDetails({ ...params.param.data });
-    setShowMenu(true);
+    if (params)
+      setEditParams(params);
+      setShowMenu(true);
   }
 
-  const onConfirm=async ()=>{
-      const param = {
-      name: { url: 'update' },
-      body: {
-        CRUD:"D",
-        _id:  showConfirmation?.data?.["_id"] || null,
-      },
-      __config__: {
-        invalidatesTags: () => ['fetch']
-      }
-    }
-    const res= await update(param);
-    if(res?.data?.status==="Success"){
-        showToast("Todo deleted successfully","success");
-       
-    } else {
-        showToast("Failed to delete todo!","error");
-        
-    }
-     setShowConfirmation(null)
+  const onConfirm = () => {
+      
+       if(showConfirmation){
+          removeRow(showConfirmation?.params);
+          setShowConfirmation(null);
+       }
+      
   }
-  const handleDelete=(params:any)=>{
-        setShowConfirmation({
-          isOpen:true,
-          data:{...params.param.data}
-        })
+  const handleDelete = (params: any) => {
+    setShowConfirmation({
+      isOpen: true,
+      params
+    })
 
   }
-  
-  const handleComplete=async (evt:any,params:any)=>{
-      const completed=evt?.target.value;
-         const param= {
-      name: { url: 'update' },
-      body: {
-        CRUD:'U',
-        _id: params.data?.["_id"],
-        completed:completed
-      },
-      __config__: {
-        invalidatesTags: () => []
-      }
-    }
-   const res= await update(param);
-    if(res?.data?.status==="Success"){
-      showToast("Todo updated successfully","success")
-    } else {
-      const message=editDetails ? "Failed to edit todo!" : "Failed to create todo!";
-      showToast(message,"error");
-    }
+
+  const handleComplete = (evt: any) => {
+   
   }
 
-  const onClose=(evt?:any)=>{
+  const onClose = (evt?: any) => {
     evt?.preventDefault();
-    setEditDetails(null);
+    setEditParams(null);
   }
 
-     const todoGridConfig=useMemo(()=>{
-          return todoListConfig(handleEdit,handleDelete,handleComplete)
-     },[handleEdit,handleDelete,handleComplete])
-    
-     const createTodoFormConfig=useMemo(()=>{
-      return createTodoConfig(editDetails)
-     },[editDetails])
-    
-  
+  const todoGridConfig = useMemo(() => {
+    return todoListConfig(handleEdit, handleDelete, handleComplete)
+  }, [handleEdit, handleDelete, handleComplete])
+
+  const createTodoFormConfig = useMemo(() => {
+    return createTodoConfig(editParams)
+  }, [editParams])
+   
   return (
     <>
-      <div className="flex justify-center justify-self-center  w-auto min-h-[450px] m-8  rounded shadow border border-gray-300 bg-white">
-        <div >
-           <div className='w-full pb-4 shadow'>
-            <div className="text-gray-600 font-bold text-sm m-4 flex justify-self-center">{headerTitle.title}</div>
+      <div className="w-full h-full bg-white flex flex-col">
 
-             <div className='flex justify-center'>
-              <SearchBox />
-              <Button
-                data-tooltip-id="global-tooltip"
-                data-tooltip-content="Create todo"
-                onClick={()=>setShowMenu(true)}
-                variant={Variant.Empty}
-                type='button'
-              >
-                <CreateIcon className="w-6 h-6 text-blue-500 " />
-              </Button>
-             
-             
-             </div>
-           </div>
+        <div className='bg-white sticky top-0 z-10 p-4 shadow-sm flex flex-col items-center '>
+          <div className="text-gray font-bold text-lg mt-4">{headerTitle.title}</div>
+        <div className='flex  items-center'>
+          <SearchBox />
+          <Button
+            data-tooltip-id="global-tooltip"
+            data-tooltip-content="Create todo"
+            onClick={() => setShowMenu(true)}
+            variant={Variant.Empty}
+            className='btnHover'
+            type='button'
+          >
+            <CreateIcon className="w-6 h-6 text-primary" />
+          </Button>
 
-          {/* Scrollable todo list */}
-          <div className="max-h-[300px] min-w-3xl w-full overflow-y-auto p-4 hide-scrollbar">
-             <FormGrp group={todoGridConfig} ref={todoRef}/>
-          </div>
+
         </div>
+        </div>
+        <div className=" w-full p-4 overflow-y-auto hide-scrollbar flex-1 ">
+          <FormGrp group={todoGridConfig} ref={todoRef} />
+        </div>
+
       </div>
       {showMenu &&
         (
-        <AsideMenu
-          isOpen={showMenu}
-          title={editDetails ? 'Edit todo' : 'Create todo'}
-          setIsOpen={setShowMenu}
-          onSave={handleSave}
-          onClose={onClose}
-          width='500'
-        >
-          <FormGrp group={createTodoFormConfig} ref={createTodoRef}/>
-        </AsideMenu>
+          <AsideMenu
+            isOpen={showMenu}
+            title={editParams ? 'Edit todo' : 'Create todo'}
+            setIsOpen={setShowMenu}
+            onSave={handleSave}
+            onClose={onClose}
+            width='500'
+          >
+            <FormGrp group={createTodoFormConfig} ref={createTodoRef} />
+          </AsideMenu>
         )
-      } 
+      }
 
-      {showConfirmation?.isOpen && (<ShowConfirmation isOpen={showConfirmation?.isOpen} onConfirm={onConfirm} onCancel={()=>{setShowConfirmation(null)}}/>)}
+      {showConfirmation?.isOpen && (<ShowConfirmation isOpen={showConfirmation?.isOpen} onConfirm={onConfirm} onCancel={() => { setShowConfirmation(null) }} />)}
 
     </>
   )

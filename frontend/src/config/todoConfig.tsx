@@ -29,8 +29,8 @@ const colDefs=(handleComplete:(evt:any,params:any)=>void)=>{
       readonly:true,
       type:['customeTextAreaCell']
     },{
-      field:'createdAt',
-      headerName:'Created at',
+      field:'createdDate',
+      headerName:'Created date',
       width:150,
       readonly:true,
       type:['CellDatePicker']
@@ -66,10 +66,12 @@ export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:
         },
       },
       groupChildProps: {
+        style:{height:'200px' , width:'100%'},
         uiConfig: {
           ...colDefs(handleComplete),
           sideBar: { toolPanels: [] },
         },
+        
       },
       additionalIcons:[{
         icon:<EditIcon/>,
@@ -85,9 +87,9 @@ export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:
     };
 }
 
-export const createTodoConfig=(editDetails:any)=>{
-  
-const { title, description } = editDetails || {};
+export const createTodoConfig=(editParams:any)=>{
+ 
+const data = editParams?.param?.data || {};
   return {
        type:'inputFields',
        fields:[
@@ -97,14 +99,22 @@ const { title, description } = editDetails || {};
           label:'Title',
           required:true,
           fieldProps:{
-            value:title
+            value:data?.['title']
           }
         },{
           type:'textarea',
           field:'description',
           label:'Description',
           fieldProps:{
-            value:description
+            value:data?.['description']
+          }
+        },{
+          type:'date',
+          field:'createdDate',
+          label:'Created date',
+          readonly:true,
+          fieldProps:{
+            value: data?.['createdDate'] || new Date()
           }
         }
        ]

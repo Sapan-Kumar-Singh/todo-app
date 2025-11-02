@@ -17,9 +17,10 @@ const App = () => {
         <Route
           path="/todos"
           element={
-            <ProtectedRoute>
-              <TodoContainer />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //   <TodoContainer />
+            // </ProtectedRoute>
+            <TodoContainer/>
           }
         />
 

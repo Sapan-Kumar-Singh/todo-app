@@ -18,6 +18,7 @@ interface DateInput {
   className?: string;
   value?: string;
   placeholder?: string;
+  insideGrid?:boolean;
 }
 const DateField = ({
   className,
@@ -31,9 +32,10 @@ const DateField = ({
   onChange,
   placeholder = '',
   errorMessage,
-  disabled
+  disabled,
+  insideGrid=false
 }: DateInput) => {
-
+   
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null)
   const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,15 +107,17 @@ const DateField = ({
           value={value}
           type={'date'}
           disabled={disabled || readonly}
-          className={classNames(
-            "border-t-0 border-l-0 border-r-0 border-b border-b-form-default pb-2 text-xs font-medium text-lightblack outline-none !bg-transparent",
-            {
-              "!border-b border-form-error": !!errorMessage,
-              "!border-b border-form-primary": isFocused,
-              "!border-b border-form-disabled !text-form-disabled-text !cursor-not-allowed":
+           className={classNames(
+                     "border-t-0 border-l-0 border-r-0   pb-2 text-xs font-medium text-lightblack outline-none !bg-transparent",
+                     {
+              "border-b border-form-default":!insideGrid,
+              "border-b border-form-error": !!errorMessage,
+              "border-b border-form-primary": isFocused,
+              "border-b border-form-disabled":!insideGrid,
+              "!text-form-disabled-text !cursor-not-allowed":
                 readonly,
             }
-          )}
+                   )}
         />
         {!!errorMessage && (
           <div className="text-form-error font-bold text-[10px]">

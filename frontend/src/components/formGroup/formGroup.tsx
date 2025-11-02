@@ -8,6 +8,7 @@ import { InputForm } from '../inputForm/inputForm';
 import Grid from '../grid';
 import { appendActionColumns } from '../grid/actionColumnManager';
 import { FormValidator } from './formVakidator';
+import { formattedDate } from '../../helper/utils';
 
 
 interface FormGrpProps {
@@ -208,15 +209,15 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
                   }
                   break;
                 }
-                // case "date": {
-                //   obj[item.field] = convertDateStringToDateInput(fieldVal);
-                //   if (!obj[item.field] && item.fieldProps?.value) {
-                //     obj[item.field] = convertDateStringToDateInput(
-                //       item.fieldProps?.value
-                //     );
-                //   }
-                //   break;
-                // }
+                case "date": {
+                  obj[item.field] = formattedDate(fieldVal);
+                  if (!obj[item.field] && item.fieldProps?.value) {
+                    obj[item.field] = formattedDate(
+                      item.fieldProps?.value
+                    );
+                  }
+                  break;
+                }
                 default: {
                   obj[item.field] = fieldVal;
                   if (!obj[item.field] && item.fieldProps?.value) {
@@ -253,7 +254,7 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
         // triggerFormChangeEvent();
       }
     };
-
+    
     const modifyQueryConfigParam = (params: any) => {
       setQueryConfig((prevState: any) => ({
         ...prevState,
@@ -363,7 +364,7 @@ const FormGrpComponent = React.forwardRef<HTMLDivElement, FormGrpProps>(
                 key={data?.length ? `filled-grid-${gridId}` : `empty-grid-${gridId}`}
                 ref={gridRef}
                 // preserveSelectedTabData={true}
-                style={{ height: '100%' }}
+                style={group?.groupChildProps?.style || {height:'200px', width:'100%'}}
                 rows={data}
                 groupIndex={groupIndex}
                 //  allowGridSizeChange={noGridResize ? false : allowGridSizeChange}

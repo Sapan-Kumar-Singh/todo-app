@@ -126,7 +126,7 @@ export const Input = ({
               "border-b border-form-default":!insideGrid,
               "border-b border-form-error": !!errorMessage,
               "border-b border-form-primary": isFocused,
-              "border-b border-form-disabled !text-form-disabled-text !cursor-not-allowed":
+              "!text-form-disabled-text !cursor-not-allowed":
                 readonly,
             }
           )}

@@ -49,7 +49,6 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
       }
       const hasFieldError = (formik.isSubmitting ||  formik.touched[field] || (otherConfig.isRemoteValidation && remoteValidationErrors?.[field])) && formik.errors[field];
       const onChange=(evt:any)=>{
-        
         if(formik){
            formik.setFieldValue(field,evt.target.value)
         }
@@ -110,7 +109,7 @@ export const InputForm=React.memo(({field,formik,initialFieldValues,groupFields,
               name={field}
               value={formik.values[field] ?? ''}
               readonly={readonly}
-            //  onChange={onChange}
+              onChange={onChange}
               errorMessage={
                 hasFieldError ? remoteValidationErrors?.[field] || formik.errors[field] : ""
               }

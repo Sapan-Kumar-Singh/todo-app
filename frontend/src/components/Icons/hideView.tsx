@@ -1,10 +1,9 @@
 import React from 'react'
 
-const HideView = ({ className = "w-6 h-6 cursor-pointer", ...props }: React.SVGProps<SVGSVGElement>) => {
+const HideView = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <>
       <svg
-        className={className}
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

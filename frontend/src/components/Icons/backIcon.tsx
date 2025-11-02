@@ -1,11 +1,11 @@
 import React from 'react'
 
-const BackIcon = ({ className = "w-6 h-6 text-blue-500 cursor-pointer", ...props }: React.SVGProps<SVGSVGElement>) => {
+const BackIcon = (props: React.SVGProps<SVGSVGElement>) => {
 
     return (
         <>
             <svg
-                className={className}
+                //className={className}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

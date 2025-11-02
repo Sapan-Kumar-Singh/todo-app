@@ -11,6 +11,7 @@ import { getResultSelectorWithErrorHandler } from "../../api-services";
 ModuleRegistry.registerModules([AllCommunityModule]);
 import './grid.scss';
 import { columnTypesConfig } from "./formatCols";
+import { Skeleton } from "../skeleton";
 
 type UiConfigOptions = {
   hideSwitcher?: boolean;
@@ -98,7 +99,7 @@ interface IRow {
 
 const Grid = React.memo(
   React.forwardRef<AgGridReact<IRow>, GridProps>((props, ref) => {
-
+   
     const {
       reduxConfig,
       uiConfig,
@@ -176,6 +177,14 @@ const Grid = React.memo(
       });
       return data;
     };
+
+    const config=useMemo(()=>({
+      type:'grid',
+      layout:'grid-skeleton',
+      tabs:0,
+      isFullWidth:false,
+      height:style?.height
+    }),[style?.height])
         
     const data = useMemo(
       () =>
@@ -293,7 +302,15 @@ const Grid = React.memo(
     const defaultColDef: ColDef = {
       flex: 1,
     };
-
+   
+    const handleGridReady=(params:any)=>{
+      if(params && ref && ref.current){
+           ref.current={
+            ...ref.current,
+            gridOptions:{...params}
+           }
+      }
+    }
     if(ref && ref.current){
         ref.current={
             ...ref.current,
@@ -322,7 +339,7 @@ const Grid = React.memo(
        // getContextMenuItems: getContextMenuItems,
         columnDefs: columnDefination,
         context:{formik},
-       // onGridReady: handleGridReady,
+        onGridReady: handleGridReady,
        // onColumnPinned: handleDisplayedColumnsChanged,
      //   onColumnMoved: handleDisplayedColumnsChanged,
      //   onColumnVisible: handleDisplayedColumnsChanged,
@@ -397,7 +414,7 @@ const Grid = React.memo(
      getCustomRowClass,
    //   getContextMenuItems,
       columnDefination,
-  //    handleGridReady,
+       handleGridReady,
   //    handleDisplayedColumnsChanged,
   //    handleSizeChanged,
   //    handleSortChanged,
@@ -412,9 +429,12 @@ const Grid = React.memo(
     //  initState,
    //   isLoaded
     ]);
-
+   
+      if(!data){
+        return <Skeleton {...config}/>
+      }
     return (
-      <div style={{ height: 400 }} className="ag-theme-material">
+      <div style={{...style }} className="ag-theme-material">
         <AgGridReact {...gridProps} />
       </div>
     );

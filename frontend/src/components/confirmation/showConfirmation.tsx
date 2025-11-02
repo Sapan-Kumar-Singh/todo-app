@@ -37,7 +37,7 @@ const ShowConfirmation: React.FC<ShowConfirmationProps> = ({
                         <Button type={'button'} variant={Variant.Bordered} onClick={onCancel}>
                             <p>Cancel</p>
                         </Button>
-                        <Button type={'button'} onClick={onConfirm}  > <p>Delete </p> </Button>
+                        <Button type={'button'} className='hover:cursor-pointer' onClick={onConfirm}  > <p>Delete </p> </Button>
                     </div>
                 </div>
             </div>

@@ -189,7 +189,7 @@ export const Skeleton = ({ layout, tabs, isFullWidth, styles, height }: any) => 
       </div>
   ) : layout === "sideMenu" ? (
     <div className="flex flex-col gap-4 py-3 pl-3 pr-6 mt-2">
-      {new Array(17).fill("").map((v, idx) => (
+      {new Array(17).fill("").map((_, idx) => (
         <div
           key={idx}
           className="rounded-lg h-6 w-full animate-pulse bg-slate-800"
@@ -198,7 +198,7 @@ export const Skeleton = ({ layout, tabs, isFullWidth, styles, height }: any) => 
     </div>
   ) : layout === "list" ? (
     <div className="w-full mt-2 flex flex-col gap-3 justify-center items-center">
-      {new Array(8).fill("").map((v, idx) => (
+      {new Array(8).fill("").map((_, idx) => (
         <div key={idx} className="skeleton-loader h-10  w-full" />
       ))}
     </div>

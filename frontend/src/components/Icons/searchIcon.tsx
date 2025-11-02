@@ -1,10 +1,9 @@
 import React from 'react'
 
-const SearchIcon = ({className = "w-6 h-6", ...props}:React.SVGProps<SVGSVGElement>) => {
+const SearchIcon = (props:React.SVGProps<SVGSVGElement>) => {
     return (
         <>
             <svg
-                className={className}
                 viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg"
                   {...props}
