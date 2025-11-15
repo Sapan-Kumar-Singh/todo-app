@@ -31,7 +31,7 @@ const CheckBox = ({ label, field, readonly=false, formik ,value,onChange,onBlur}
                     type="checkbox"
                     className="checkBox"
                     name={field}
-                    checked={['Y', true].includes(formik?.values?.[field] || value)}
+                   // checked={['Y', true].includes(formik?.values?.[field] || value)}
                     onChange={(e) => {
                        if(readonly) return;
                        const newValue = e.target.checked ? 'Y' : 'N';

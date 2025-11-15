@@ -24,6 +24,12 @@ const todosSchema = new Schema(
       },
       default: "N"
     },
+    createdDate:{
+      type:String,
+    },
+    'grid-identifier':{
+        type:String
+    },
     user:{
       type:Schema.Types.ObjectId,
       ref:"User"

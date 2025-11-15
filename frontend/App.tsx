@@ -3,6 +3,7 @@ import Login from "./src/components/login";
 import Singup from "./src/components/singup";
 import ProtectedRoute from "./src/components/routes";
 import TodoContainer from "./src/components/todo/todoContainer";
+import { ToastContainer } from "react-toastify";
 
 
 const App = () => {
@@ -17,16 +18,22 @@ const App = () => {
         <Route
           path="/todos"
           element={
-            // <ProtectedRoute>
-            //   <TodoContainer />
-            // </ProtectedRoute>
-            <TodoContainer/>
+            <ProtectedRoute>
+              <TodoContainer />
+            </ProtectedRoute>
           }
         />
 
         {/* Default redirect */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <ToastContainer
+        toastStyle={{
+          width: "250px",
+          height:'20px',
+          fontSize: "18px",
+        }}
+       />
     </Router>
   );
 };

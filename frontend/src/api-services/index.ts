@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getToken } from "../helper/utils";
 
 
 const basUrl=import.meta.env.VITE_BASE_URL;
@@ -136,7 +137,16 @@ const onQueryStartedHandle = async (
 
 export const api = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl:basUrl}),
+  baseQuery: fetchBaseQuery({ 
+    baseUrl:basUrl,
+    prepareHeaders:(headers)=>{
+           const token=getToken();
+          if(token){
+            headers.set("Authorization", `Bearer ${token}`);
+          }
+          return headers;
+    }
+  }),
   endpoints: (builder) => ({
     fetchData: builder.query({
       query: (params: any) => {
@@ -273,8 +283,8 @@ export const api = createApi({
           config?.url ||
           (name ? `update?${new URLSearchParams(name).toString()}` : "update");
         const method = config?.method || "POST";
-          console.log("url--",url);
-          console.log("body--",JSON.stringify(copiedPayload))
+          // console.log("url--",url);
+          // console.log("body--",JSON.stringify(copiedPayload))
         return {
           url: url,
           method: method,

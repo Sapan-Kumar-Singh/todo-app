@@ -1,16 +1,12 @@
 import { useMemo, useRef, useState } from 'react'
-
-import { headerTitle, Variant } from '../../helper/enum'
-import CreateIcon from '../Icons/createIcon'
-import SearchBox from '../searchBox'
 import AsideMenu from '../asideMenu'
 import { FormGrp } from '../formGroup/formGroup'
 import { useUpdateDataMutation } from '../../api-services'
 import { showToast } from '../showToast'
 import { createTodoConfig, todoListConfig } from '../../config/todoConfig'
 import ShowConfirmation from '../confirmation/showConfirmation'
-import { Button } from '../button'
-import { addRow, removeRow, updateRow } from '../../helper/utils'
+import { addRow, getAllRowData, removeRow, updateRow } from '../../helper/utils'
+import HeaderPanel from '../headerPanel'
 
 const TodoContainer = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -20,7 +16,7 @@ const TodoContainer = () => {
   const [showConfirmation, setShowConfirmation] = useState<Record<string,any> | null>(null)
   const [update] = useUpdateDataMutation();
 
-  const handleSave = (evt: any) => {
+  const handleCreateEdit = (evt: any) => {
     evt?.preventDefault();
    const data = createTodoRef?.current?.formik?.values;
     if(editParams){
@@ -58,9 +54,7 @@ const TodoContainer = () => {
 
   }
 
-  const handleComplete = (evt: any) => {
-   
-  }
+ 
 
   const onClose = (evt?: any) => {
     evt?.preventDefault();
@@ -68,35 +62,46 @@ const TodoContainer = () => {
   }
 
   const todoGridConfig = useMemo(() => {
-    return todoListConfig(handleEdit, handleDelete, handleComplete)
-  }, [handleEdit, handleDelete, handleComplete])
+    return todoListConfig(handleEdit, handleDelete)
+  }, [handleEdit, handleDelete])
 
   const createTodoFormConfig = useMemo(() => {
     return createTodoConfig(editParams)
-  }, [editParams])
+  }, [editParams]);
+  
+ 
+  const handleSave=async ()=>{
+         const gridRef=todoRef?.current?.gridRef;
+         if(gridRef && gridRef.current){
+            const gridApi=gridRef?.current?.gridOptions?.api;
+            const rowData= getAllRowData(gridApi);
+            const params={
+              __config__:{
+                  url:'update',
+                  method:'POST'
+              },
+              body:{
+               data:rowData
+              }
+            }
+           const res = await update(params);
+             console.log("res---",res);
+             if(res?.data.status==="Success"){
+              const message=res?.data?.message || "datadata updated successfully"
+                 showToast(message,"success");
+             } else {
+              const message=res?.error?.data?.status;
+              showToast(message,"error");
+             }
+         }
+
+  }
    
   return (
     <>
       <div className="w-full h-full bg-white flex flex-col">
-
-        <div className='bg-white sticky top-0 z-10 p-4 shadow-sm flex flex-col items-center '>
-          <div className="text-gray font-bold text-lg mt-4">{headerTitle.title}</div>
-        <div className='flex  items-center'>
-          <SearchBox />
-          <Button
-            data-tooltip-id="global-tooltip"
-            data-tooltip-content="Create todo"
-            onClick={() => setShowMenu(true)}
-            variant={Variant.Empty}
-            className='btnHover'
-            type='button'
-          >
-            <CreateIcon className="w-6 h-6 text-primary" />
-          </Button>
-
-
-        </div>
-        </div>
+           <HeaderPanel handleCreate={()=>setShowMenu(true)} handleSave={handleSave}/>
+      
         <div className=" w-full p-4 overflow-y-auto hide-scrollbar flex-1 ">
           <FormGrp group={todoGridConfig} ref={todoRef} />
         </div>
@@ -108,7 +113,7 @@ const TodoContainer = () => {
             isOpen={showMenu}
             title={editParams ? 'Edit todo' : 'Create todo'}
             setIsOpen={setShowMenu}
-            onSave={handleSave}
+            onSave={handleCreateEdit}
             onClose={onClose}
             width='500'
           >

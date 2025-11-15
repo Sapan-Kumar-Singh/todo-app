@@ -1,11 +1,7 @@
 import { User } from "../models/userSchema.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { generateToken } from "./authenticate.js";
 
-// Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
-};
 
 // Compare password
 const matchPassword = async (user, password) => {

@@ -4,7 +4,7 @@ import { columnTypesConfig } from "../components/grid/formatCols";
 import DeleteIcon from "../components/Icons/deleteIcon";
 import EditIcon from "../components/Icons/editIcon";
 
-const colDefs=(handleComplete:(evt:any,params:any)=>void)=>{
+const colDefs=()=>{
   return  {
    columnTypes:columnTypesConfig,
     columnDefs:[
@@ -13,7 +13,6 @@ const colDefs=(handleComplete:(evt:any,params:any)=>void)=>{
       headerName:'Completed',
       width:100,
       type:['CellCheckboxPicker'],
-      onChange:handleComplete,
     },
     {
       field:'title',
@@ -41,7 +40,7 @@ const colDefs=(handleComplete:(evt:any,params:any)=>void)=>{
 
 
 
-export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:any)=>void,handleComplete:(evt:any)=>void)=>{
+export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:any)=>void)=>{
     return {
       type: "grid",
       //  rows:[{'test_grid':'test row1'},{'test_grid':'test row2'}],
@@ -68,7 +67,7 @@ export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:
       groupChildProps: {
         style:{height:'200px' , width:'100%'},
         uiConfig: {
-          ...colDefs(handleComplete),
+          ...colDefs(),
           sideBar: { toolPanels: [] },
         },
         

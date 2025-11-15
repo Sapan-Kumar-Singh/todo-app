@@ -134,6 +134,12 @@ const columnTypesConfig: any = {
         }
       }
       const onChange = (evt: ChangeEvent<HTMLInputElement>) => {
+        if(evt.target.value==='Y'){
+            params.data[params.colDef.field]='Y'
+        } else {
+           params.data[params.colDef.field]='N'
+        }
+       
         if (params?.colDef?.onChange) {
           params?.colDef?.onChange(evt, params);
         }

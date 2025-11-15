@@ -79,6 +79,13 @@ export const removeRow=(params:any)=>{
    
 }
 
+ export const getAllRowData=(gridApi:any)=>{
+       const rowData:any[]=[];
+       gridApi?.forEachNode((row:any)=>{
+        rowData.push(row.data)
+       })
+       return rowData;
+  }
 
 export const formattedDate = (isoString:string) => {
     if(!isoString) return;

@@ -152,9 +152,9 @@ export const Password = ({
                     
                     {!hideViewPassword && value && (
                         showPassword ? (
-                            <HideView onClick={handleHidePassword} />
+                            <HideView onClick={handleHidePassword} className="w-4 h-4 cursor-pointer text-primary" />
                         ) : (
-                            <ViewIcon onClick={handleViewPassword} />
+                            <ViewIcon onClick={handleViewPassword}  className="w-4 h-4 cursor-pointer text-primary"/>
                         )
                     )}
                    

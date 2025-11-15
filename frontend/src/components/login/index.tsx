@@ -37,10 +37,8 @@ const Login = () => {
             const res = await update(params);
 
             if (res?.data?.status === "Success") {
-                const message = res?.data?.message;
                 const data = res?.data.data;
                 setToken(data);
-                showToast(message, "success");
                 setTimeout(() => {
                     navigate('/todos')
                 }, 2000);
