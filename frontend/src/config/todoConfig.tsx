@@ -43,7 +43,6 @@ const colDefs=()=>{
 export const todoListConfig=(handleEdit:(params:any)=>void,handleDelete:(params:any)=>void)=>{
     return {
       type: "grid",
-      //  rows:[{'test_grid':'test row1'},{'test_grid':'test row2'}],
       editable:true,
       queryConfig: {
         query: useFetchDataQuery,

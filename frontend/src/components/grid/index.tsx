@@ -12,6 +12,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import './grid.scss';
 import { columnTypesConfig } from "./formatCols";
 import { Skeleton } from "../skeleton";
+import { useDirty } from "../dirtyContext";
+import { getAllRowData } from "../../helper/utils";
 
 type UiConfigOptions = {
   hideSwitcher?: boolean;
@@ -151,7 +153,7 @@ const Grid = React.memo(
       aggFuncs: aggFuncsFromApplication,
       ...otherUIConfig
     } = uiConfig;
-     
+     const dirty=useDirty();
      if(uiConfig && !uiConfig.columnTypes){
       uiConfig.columnTypes=columnTypesConfig;
      }
@@ -330,6 +332,15 @@ const Grid = React.memo(
         }
     },[columnDefs])
 
+    const onRowDataUpdatedHandler=(evt:any)=>{
+        if(evt.api){
+            const allRows=getAllRowData(evt?.api);
+            const isGridUpdated=allRows.some((row)=>row.CRUD!=='R');
+            dirty.setDirty(isGridUpdated);
+        }
+        
+    }
+
     const gridProps = useMemo(() => {
       return {
         ref: ref,
@@ -364,14 +375,14 @@ const Grid = React.memo(
         // onColumnRowGroupChanged: handleDisplayedColumnsChanged,
         // inRangeInclusive: true,
         // getLocaleText: getLocaleText,
-        // onCellValueChanged: cellValueChangedHandler,
+         // onCellValueChanged: cellValueChangedHandler,
         // onCellEditingStopped: cellValueChangedHandler,
         // processCellForClipboard: processCellForClipboardHandler,
         // processCellFromClipboard: processCellFromClipboardHandler,
         // processDataFromClipboard: processDataFromClipboard,
         // suppressLastEmptyLineOnPaste: true,
         // tabToNextCell: tabToNextCellHandler,
-        // onRowDataUpdated: onRowDataUpdatedHandler,
+         onRowDataUpdated: onRowDataUpdatedHandler,
         // suppressDragLeaveHidesColumns: true,
         // onModelUpdated:onModelUpdatedHandler,
         // onRowGroupOpened:onRowGroupOpened,

@@ -3,8 +3,10 @@ import { headerTitle, Variant } from '../../helper/enum'
 import SearchBox from '../searchBox'
 import { Button } from '../button'
 import CreateIcon from '../Icons/createIcon'
+import { useDirty } from '../dirtyContext'
 
 const HeaderPanel = ({handleCreate,handleSave}:any) => {
+  const dirty=useDirty();
 
   return (
     <>
@@ -28,7 +30,7 @@ const HeaderPanel = ({handleCreate,handleSave}:any) => {
             variant={Variant.Bordered}
             className='btnHover'
             type='button'
-            disabled={false}
+            disabled={!dirty.isDirty}
           >
             <span>Save</span>
           </Button>

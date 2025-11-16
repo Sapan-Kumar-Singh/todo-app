@@ -40,7 +40,7 @@ export const updateRow=(params:any,updatedData:any)=>{
             addIndex:rowIndex
         })
       } else{
-         // alos update db
+         // when data is in  db
         const updatedRow={
             ...gridRowData,
             "CRUD":'U',
@@ -51,33 +51,30 @@ export const updateRow=(params:any,updatedData:any)=>{
             addIndex:rowIndex
         })
       }
-
+      api.refreshCells({ force: true });
 }
 
-export const removeRow=(params:any)=>{
-    const data=params?.param?.data;
-    const api=params?.param?.api;
-    const rowIndex=params?.param?.node['rowIndex'];
-    if(params && data  && api){
-        // data deleted to grid only
-        if(data.CRUD==='C'){
-             api?.applyTransaction({ remove: [data] });
-        } else{
-            // data deleted to db aslo
-            const deletedRow={
-                ...data,
-                "CRUD":'D'
-            }
-            api?.applyTransaction({
-                add:[deletedRow],
-                addIndex:rowIndex
-            })
-        }
-         
-      api.refreshCells(({force:true}))
-    }
-   
-}
+export const removeRow = (params: any) => {
+  const data = params?.param?.data;
+  const api = params?.param?.api;
+
+  if (!data || !api) return;
+
+  // Case 1: Newly created row (not in DB)
+  if (data.CRUD === "C") {
+    api.applyTransaction({ remove: [data] });
+    return;
+  }
+
+  // Case 2: Existing row → mark as Deleted
+  const updatedRow = { ...data, CRUD: "D" };
+
+  api.applyTransaction({
+    update: [updatedRow],  // 👈 update instead of adding a new row
+  });
+   api.refreshCells({ force: true });
+};
+
 
  export const getAllRowData=(gridApi:any)=>{
        const rowData:any[]=[];

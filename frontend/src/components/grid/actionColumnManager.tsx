@@ -1,9 +1,10 @@
 import { v4 as uuidv4  } from "uuid";
-import DeleteIcon from "../Icons/deleteIcon";
-import EditIcon from "../Icons/editIcon";
 import { ValidationIcon } from "../Icons/validationIocn";
 import type { AdditionalIconsType, GroupType, SectionsType } from "../types";
 import { GridIcon } from "./gridIcon/gridIcon";
+import CreateRowIcon from "../Icons/createRowIcon";
+import EditRowIcon from "../Icons/editRowIcon";
+import DeleteRowIcon from "../Icons/deleteRowIcon";
 
 
 
@@ -49,20 +50,6 @@ const onMouseLeave = (e: any) => {
 }
 
 
-// const onColumnActionClick =async (param: any, group: GroupType) => {
-
-  
-//   if (group.type === "grid" && CRUD_Flag === 'D') {
-//     return
-//   }
-  
-//   if (param?.isInDetail) {
-//     param?.onClick?.();
-//     return;
-//   }
-
- 
-// }
 
 
 
@@ -74,8 +61,7 @@ const leftActions = {
 
         const CRUD_Flag = param?.data?.CRUD?.toUpperCase?.();
         let uid = uuidv4();
-        const errors = param.data.__errors
-
+        const errors = param.data.__errors;
         return (
             !(param && param.data && param.data.isTotalRow) && (
                 <>
@@ -107,11 +93,12 @@ const leftActions = {
                         }
                         data-tooltip-place="right"
                     >
+                        
                         {CRUD_Flag === 'D' ? (
-                            <DeleteIcon />
+                            <DeleteRowIcon />
                         ) : CRUD_Flag === 'U' ? (
-                            <EditIcon />
-                        ) : (
+                            <EditRowIcon />
+                        ) : CRUD_Flag=== 'C' ?<CreateRowIcon/> : (
                             <></>
                         )}
                     </GridIcon>
@@ -120,6 +107,8 @@ const leftActions = {
             )
         )
     },
+    
+    
 }
 
 const rightActions = (section: SectionsType | undefined, group: GroupType) => {
@@ -162,31 +151,7 @@ const rightActions = (section: SectionsType | undefined, group: GroupType) => {
               )
             : null}
 
-          {/* {group &&
-            group.type === "grid" &&
-            (!group.hasOwnProperty("supressDeleteIcon") ||
-              (group.supressDeleteIcon &&
-                !group.supressDeleteIcon())) &&
-            (!group.hasOwnProperty("isDeletehidden") ||
-              (group.isDeletehidden && !group.isDeletehidden(param))) &&
-            !(param && param.data && param.data.isTotalRow) && (
-              <GridIcon
-                id={uid}
-                data-pace-grid-delete-cell
-                {...param}
-                onClickHandler={() =>
-                  onColumnActionClick(
-                    param,
-                    group,
-                    //update
-                  )
-                }
-                showOnHover={!param?.isInDetail}
-                {...(!param?.isInDetail ? { onMouseEnter, onMouseLeave } : {})}
-              >
-                <DeleteIcon />
-              </GridIcon>
-            )} */}
+         
         </>
       );
     },
@@ -197,7 +162,6 @@ const rightActions = (section: SectionsType | undefined, group: GroupType) => {
 
 
 export const appendActionColumns = (gridColumnConfig: any, section: any | undefined, group: GroupType) => {
-        // const [update]=useUpdateDataMutation();
     if (!gridColumnConfig.isColumnDefsUpdated) {
         const modifiedCss = group && group.type === 'grid' && group.additionalIcons && group.additionalIcons.length ? {
             width: ((group.additionalIcons.length + 1) * crudIconColumn.width),

@@ -15,7 +15,7 @@ interface ShowConfirmationProps {
 const ShowConfirmation: React.FC<ShowConfirmationProps> = ({
     isOpen,
     message = MESSAGE_TYPE.DELETE_CONFIRMATION,
-    warningMessage =MESSAGE_TYPE.DELETE_WARNING,
+    warningMessage,
     onConfirm,
     onCancel,
 }) => {
@@ -29,9 +29,9 @@ const ShowConfirmation: React.FC<ShowConfirmationProps> = ({
             <div className="fixed inset-0 flex items-center justify-center z-10">
                 <div className="bg-white shadow-xl rounded-md p-6 w-96">
                     <div className="text-lg font-medium mb-2 text-center">{message}</div>
-                    <div className="text-sm text-red-600 italic mb-4 text-center">
+                   {warningMessage && <div className="text-sm text-red-600 italic mb-4 text-center">
                         {warningMessage}
-                    </div>
+                    </div>}
 
                     <div className="flex justify-around">
                         <Button type={'button'} variant={Variant.Bordered} onClick={onCancel}>

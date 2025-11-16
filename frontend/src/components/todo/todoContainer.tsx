@@ -63,7 +63,7 @@ const TodoContainer = () => {
 
   const todoGridConfig = useMemo(() => {
     return todoListConfig(handleEdit, handleDelete)
-  }, [handleEdit, handleDelete])
+  }, [])
 
   const createTodoFormConfig = useMemo(() => {
     return createTodoConfig(editParams)
@@ -78,14 +78,14 @@ const TodoContainer = () => {
             const params={
               __config__:{
                   url:'update',
-                  method:'POST'
+                  method:'POST',
+                  invalidatesTags: () => ['fetch']
               },
               body:{
                data:rowData
               }
             }
            const res = await update(params);
-             console.log("res---",res);
              if(res?.data.status==="Success"){
               const message=res?.data?.message || "datadata updated successfully"
                  showToast(message,"success");
@@ -96,7 +96,9 @@ const TodoContainer = () => {
          }
 
   }
-   
+
+ 
+
   return (
     <>
       <div className="w-full h-full bg-white flex flex-col">
@@ -122,7 +124,8 @@ const TodoContainer = () => {
         )
       }
 
-      {showConfirmation?.isOpen && (<ShowConfirmation isOpen={showConfirmation?.isOpen} onConfirm={onConfirm} onCancel={() => { setShowConfirmation(null) }} />)}
+      {showConfirmation?.isOpen && (<ShowConfirmation isOpen={showConfirmation?.isOpen} onConfirm={onConfirm} onCancel={() => { setShowConfirmation(null) }} warningMessage={showConfirmation?.params?.param
+.data.CRUD!=='C' ? 'Delete this record permanently?' : ''}/>)}
 
     </>
   )

@@ -4,6 +4,7 @@ import Singup from "./src/components/singup";
 import ProtectedRoute from "./src/components/routes";
 import TodoContainer from "./src/components/todo/todoContainer";
 import { ToastContainer } from "react-toastify";
+import { DirtyProvider } from "./src/components/dirtyContext";
 
 
 const App = () => {
@@ -19,7 +20,9 @@ const App = () => {
           path="/todos"
           element={
             <ProtectedRoute>
-              <TodoContainer />
+                <DirtyProvider>
+                  <TodoContainer />
+                </DirtyProvider>
             </ProtectedRoute>
           }
         />
